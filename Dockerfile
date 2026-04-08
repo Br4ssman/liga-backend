@@ -21,7 +21,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # 5. Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# 6. Forzar creación de base de datos y dar permisos de escritura (ESTO ARREGLA EL ERROR 500)
+# 6. Forzar creación de BD, permisos y LIMPIEZA DE CACHÉ
 RUN touch /var/www/html/database/database.sqlite
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 RUN chmod -R 775 /var/www/html/storage /var/www/html/database
+
+# 7. Ejecutar comandos finales de Laravel cada vez que arranque
+RUN php artisan config:clear
