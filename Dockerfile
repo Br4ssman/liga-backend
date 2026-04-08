@@ -1,7 +1,5 @@
 FROM php:8.2-apache
 
-FROM php:8.2-apache
-
 # 1. Instalar dependencias del sistema y librerías de SQLite
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
@@ -23,6 +21,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # 5. Instalar dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
-# 6. Permisos para que Laravel pueda escribir en la base de datos y logs
+# 6. Forzar creación de base de datos y dar permisos de escritura (ESTO ARREGLA EL ERROR 500)
+RUN touch /var/www/html/database/database.sqlite
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 RUN chmod -R 775 /var/www/html/storage /var/www/html/database
