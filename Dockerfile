@@ -19,13 +19,14 @@ COPY . /var/www/html
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-dev --optimize-autoloader
 
-# 5. Asegurar que la carpeta database existe y tiene el archivo
+# 5. Asegurar carpeta y archivo de base de datos
 RUN mkdir -p /var/www/html/database
 RUN touch /var/www/html/database/database.sqlite
 
-# 6. Permisos CRÍTICOS para SQLite y Laravel
+# 6. Permisos para que PHP pueda escribir en la BD
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
 RUN chmod -R 775 /var/www/html/storage /var/www/html/database
 
-# 7. Limpiar configuración
+# 7. Limpiar caché y EJECUTAR MIGRACIONES (Crea las tablas)
 RUN php artisan config:clear
+RUN php artisan migrate --force
